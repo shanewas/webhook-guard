@@ -9,6 +9,7 @@ public delegate Task WebhookHandler<T>(T evt, HttpContext ctx);
 
 public static class WebhookRouting
 {
+    [Obsolete("Unverified route: anyone can POST forged events. Use MapGuardedWebhook with a verifier instead.")]
     public static RouteHandlerBuilder MapWebhook<T>(this IEndpointRouteBuilder app, string eventType, WebhookHandler<T> handler)
         => app.MapPost($"/webhooks/{eventType}", async (HttpContext ctx) =>
         {
@@ -20,7 +21,7 @@ public static class WebhookRouting
             return Results.Ok();
         });
 
-    public delegate bool RawVerifier(byte[] rawBody, HttpContext ctx);
+    public delegate Task<bool> RawVerifier(byte[] rawBody, HttpContext ctx);
 
     public static RouteHandlerBuilder MapGuardedWebhook<T>(this IEndpointRouteBuilder app, string eventType, RawVerifier verify, WebhookHandler<T> handler)
         => app.MapPost($"/webhooks/{eventType}", async (HttpContext ctx) =>
@@ -28,7 +29,7 @@ public static class WebhookRouting
             using var ms = new MemoryStream();
             await ctx.Request.Body.CopyToAsync(ms);
             var raw = ms.ToArray();
-            if (!verify(raw, ctx)) return Results.Unauthorized();
+            if (!await verify(raw, ctx)) return Results.Unauthorized();
             var evt = JsonSerializer.Deserialize<T>(raw,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (evt is null) return Results.BadRequest();

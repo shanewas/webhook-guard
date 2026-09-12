@@ -24,6 +24,14 @@ public class VectorsTests
     }
 
     [Fact]
+    public void Stripe_RotationSecondV1_Accepts()
+    {
+        var payload = "{\"id\":\"evt_1\"}";
+        var header = "t=1700000000, v1=0000000000000000000000000000000000000000000000000000000000000000, v1=cf6ab59db2a13f14509ca6aa99ba5ef44464e3a9324845094c4c6205f0c1773e";
+        Assert.True(StripeVerifier.Verify(payload, header, "whsec_test_stripe", Now, Tol));
+    }
+
+    [Fact]
     public void GitHub_KnownVector_Accepts()
     {
         var payload = Encoding.UTF8.GetBytes("{\"action\":\"opened\"}");

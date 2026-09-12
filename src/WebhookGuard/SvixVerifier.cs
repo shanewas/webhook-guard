@@ -14,7 +14,7 @@ public static class SvixVerifier
         byte[] key;
         var rawSecret = secret.StartsWith("whsec_", StringComparison.Ordinal) ? secret["whsec_".Length..] : secret;
         try { key = Convert.FromBase64String(rawSecret); }
-        catch (FormatException) { key = Encoding.UTF8.GetBytes(secret); }
+        catch (FormatException) { return false; }
         var expected = Crypto.HmacSha256(key, $"{id}.{timestamp}.{payload}");
         foreach (var part in signatureHeader.Split(' ', StringSplitOptions.RemoveEmptyEntries))
         {

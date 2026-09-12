@@ -49,8 +49,8 @@ public class RoutingTests
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         var app = builder.Build();
         var got = new List<string>();
-        static bool verify(byte[] raw, Microsoft.AspNetCore.Http.HttpContext ctx)
-            => ctx.Request.Headers.TryGetValue("X-Sig", out var v) && v == "good";
+        static Task<bool> verify(byte[] raw, Microsoft.AspNetCore.Http.HttpContext ctx)
+            => Task.FromResult(ctx.Request.Headers.TryGetValue("X-Sig", out var v) && v == "good");
         app.MapGuardedWebhook<TestEvent>("user.created", verify, (evt, _) => { got.Add(evt.Id); return Task.CompletedTask; });
         await app.StartAsync();
         try
