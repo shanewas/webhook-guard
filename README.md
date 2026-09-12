@@ -30,7 +30,7 @@ app.MapGuardedWebhook<StripeEvent>("payment.succeeded",
 public sealed record StripeEvent(string Id, string Type);
 ```
 
-Install: `dotnet add package WebhookGuard`. Forged body: 401. Stale
+Install: `dotnet add package WebhookGuard.AspNetCore`. Forged body: 401. Stale
 timestamp: 401. Same delivery twice: 401. Only then does your handler run.
 
 Replay keys need a stable message id plus the signature. Stripe: the event

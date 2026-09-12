@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.1.2 — 2026-09-12
+- Package renamed to `WebhookGuard.AspNetCore`: plain `WebhookGuard` is taken
+  on NuGet by an unrelated package. No code changes.
+- LICENSE + README embedded in the package.
+
 ## v0.1.1 — 2026-09-12
 - Svix secrets that fail to decode fail closed instead of falling back to raw
   bytes. Postgres replay store deletes its own expired row before insert.
